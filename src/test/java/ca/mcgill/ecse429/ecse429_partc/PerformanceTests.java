@@ -10,43 +10,65 @@ import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.ThreadMXBean;
+
 public class PerformanceTests {
 	
 	private static int numberObjectsInitial = 5;
 	private static int numberTests = 10;
 
 	public static void main(String args[]) throws Exception{
+		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 		
 		
 		for(int i=0;i<numberObjectsInitial;i++) { // Populate the API with objects
-			long start,end;
-			start = System.currentTimeMillis();
+			long startTime,endTime,startMemory,endMemory,startCPU,endCPU;
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
 			createTodo();
-			end = System.currentTimeMillis();
-			System.out.println("Number of existing todo items : "+(i+1)+" | Time taken to create a new todo item (in ms) : "+(end-start));
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("Number of existing todo items : "+(i+1)+" | Time taken to create a new todo item (in ms) : "+(endTime-startTime));
 		}
 		System.out.println("========================== Total number of todo items : "+numberObjectsInitial+" ==========================");
 		for(int i=0;i<numberTests;i++) {
-			long start;
-			long end;
+			long startTime,endTime,startMemory,endMemory,startCPU,endCPU;
 			
-			start = System.currentTimeMillis();
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
 			String id = createTodo();
-			end = System.currentTimeMillis();
-			System.out.println("Time taken to create a new todo item (in ms) : "+(end-start));
-			start = System.currentTimeMillis();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for creating a new todo item ==========================");
+			System.out.println("Time taken (in ms) : "+(endTime-startTime)+" | Memory used (in B) : "+(endMemory-startMemory)/1024+" | CPU used (in ns) :  "+(endCPU-startCPU)/1e6);
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
 			updateTodo(id);
-			end = System.currentTimeMillis();
-			System.out.println("Time taken to update the new todo item (in ms) : "+(end-start));
-			start = System.currentTimeMillis();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for updating the todo item ==========================");
+			System.out.println("Time taken (in ms) : "+(endTime-startTime)+" | Memory used (in B) : "+(endMemory-startMemory)/1024+" | CPU used (in ns) :  "+(endCPU-startCPU)/1e6);
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
 			deleteTodo(id);
-			end = System.currentTimeMillis();
-			System.out.println("Time taken to delete the new todo item (in ms) : "+(end-start));
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for deleting the todo item ==========================");
+			System.out.println("Time taken (in ms) : "+(endTime-startTime)+" | Memory used (in B) : "+(endMemory-startMemory)/1024+" | CPU used (in ns) :  "+(endCPU-startCPU)/1e6);
 		}
 		
 	}
-	
-	
 	
 	
 	// Todo - APIs to create, delete and update
