@@ -281,6 +281,78 @@ public class PerformanceTests {
 		assertEquals(200, response.getStatusCode());
 	}
 
+
+
+	
+	// Project - APIs to create, delete and update
+	@Test
+	public static String createProject() throws Exception {
+		int idProj = 3;
+		String title = "placeholder";
+		boolean completed = true;
+		boolean activeStatus = false;
+		String description = "123 Viva L'algiré";
+
+		//JSON Payload creation
+		JSONObject object = new JSONObject();
+		object.put("id", idProj);
+		object.put("title", title);
+		object.put("completed", completed);
+		object.put("active", activeStatus);
+		object.put("description", description);
+
+		//API Calls to create the project
+		Response response = given()
+				.contentType(ContentType.JSON)
+				.body(object.toJSONString())
+				.when()
+				.post("http://localhost:4567/projects");
+		JsonPath jsonResponse = response.jsonPath();
+		assertEquals(title, jsonResponse.get("title"));
+		assertEquals(completed, Boolean.parseBoolean(jsonResponse.get("completed").toString()));
+		assertEquals(description, jsonResponse.get("description"));
+		return jsonResponse.get("id");
+	}
+
+	@Test
+	public static void updateProject(String idProj) throws Exception {
+		String title = "placeholder";
+		boolean completed = false;
+		boolean activeStatus = true;
+		String description = "-----UpdateDescription-----";
+
+		JSONObject object = new JSONObject();
+		object.put("title", title);
+		object.put("completed", completed);
+		object.put("active", activeStatus);
+		object.put("description", description);
+
+		Response response = given()
+				.contentType(ContentType.JSON)
+				.body(object.toJSONString())
+				.when()
+				.post("http://localhost:4567/projects/" + Integer.valueOf(idProj));
+
+		JsonPath jsonResponse = response.jsonPath();
+		assertEquals(title, jsonResponse.get("title"));
+		assertEquals(completed, Boolean.parseBoolean(jsonResponse.get("completed").toString()));
+		assertEquals(description, jsonResponse.get("description"));
+	}
+
+	@Test
+	public static void deleteProject(String idProj) throws Exception {
+		Response response = given()
+				.delete("http://localhost:4567/project/" + Integer.valueOf(idProj));
+
+		assertEquals(200, response.getStatusCode());
+	}
+
+
+
+
+
+
+	// Categories - APIs
 	@Test
 	public static String createCategories() throws Exception {
 		String title = "placeholder";
