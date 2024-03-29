@@ -19,6 +19,13 @@ public class PerformanceTests {
 	private static int numberObjectsInitial = 5;
 	private static int numberTests = 10;
 
+	public static int categoryID;
+	public static int projectID;
+	public static int categoryID2;
+	public static int todoID;
+	public static int todoID2;
+	public static int projectID2;
+
 	public static void main(String args[]) throws Exception {
 		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
 		ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
@@ -110,8 +117,112 @@ public class PerformanceTests {
 			System.out.println("========================== Performance test for deleting the category ==========================");
 			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
 		}
+		System.out.println("===============Category tests finished=============");
+		for (int i = 0; i < numberObjectsInitial; i++) { // Populate the API with objects
+			long startTime, endTime, startMemory, endMemory, startCPU, endCPU;
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			createInteroperabilityProjectCategory();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("Number of existing interoperabilities project/category : " + (i + 1) + " | Time taken to create a new interoperability project/category (in ms) : " + (endTime - startTime));
+		}
+		for (int i = 0; i < numberTests; i++) {
+			long startTime, endTime, startMemory, endMemory, startCPU, endCPU;
 
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			createInteroperabilityProjectCategory();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for creating a new interoperability project/category ==========================");
+			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
 
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			deleteInteroperabilityProjectCategory();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for deleting the interoperability project/category ==========================");
+			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
+		}
+		System.out.println("===============Interoperability Project/Category tests finished=============");
+		for (int i = 0; i < numberObjectsInitial; i++) { // Populate the API with objects
+			long startTime, endTime, startMemory, endMemory, startCPU, endCPU;
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			createInteroperabilityCategoryTodo();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("Number of existing interoperabilities category/todo : " + (i + 1) + " | Time taken to create a new interoperability category/todo (in ms) : " + (endTime - startTime));
+		}
+		for (int i = 0; i < numberTests; i++) {
+			long startTime, endTime, startMemory, endMemory, startCPU, endCPU;
+
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			createInteroperabilityCategoryTodo();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for creating a new interoperability category/todo ==========================");
+			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
+
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			deleteInteroperabilityCategoryTodo();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for deleting the interoperability category/todo ==========================");
+			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
+		}
+		System.out.println("===============Interoperability Category/Todo tests finished=============");
+		for (int i = 0; i < numberObjectsInitial; i++) { // Populate the API with objects
+			long startTime, endTime, startMemory, endMemory, startCPU, endCPU;
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			createInteroperabilityTodoProject();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("Number of existing interoperabilities todo/project : " + (i + 1) + " | Time taken to create a new interoperability todo/project (in ms) : " + (endTime - startTime));
+		}
+		for (int i = 0; i < numberTests; i++) {
+			long startTime, endTime, startMemory, endMemory, startCPU, endCPU;
+
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			createInteroperabilityTodoProject();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for creating a new interoperability todo/project ==========================");
+			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
+
+			startTime = System.currentTimeMillis();
+			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			startCPU = threadMXBean.getCurrentThreadCpuTime();
+			deleteInteroperabilityTodoProject();
+			endTime = System.currentTimeMillis();
+			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
+			endCPU = threadMXBean.getCurrentThreadCpuTime();
+			System.out.println("========================== Performance test for deleting the interoperability todo/project ==========================");
+			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
+		}
+		System.out.println("===============Interoperability Todo/Project tests finished=============");
 	}
 
 
@@ -214,5 +325,166 @@ public class PerformanceTests {
 				.delete("http://localhost:4567/categories/" + Integer.valueOf(id));
 
 		assertEquals(200, response.getStatusCode());
+	}
+
+	@Test
+	public static void createInteroperabilityProjectCategory() throws Exception {
+		String projectTitle = "projectTitle";
+		String projectDescription = "projectDescription";
+
+		JSONObject projectObject = new JSONObject();
+		projectObject.put("title", projectTitle);
+		projectObject.put("description", projectDescription);
+
+		Response response = given()
+				.contentType(ContentType.JSON)
+				.body(projectObject.toJSONString())
+				.when()
+				.post("http://localhost:4567/projects");
+
+		JsonPath jsonResponse = response.jsonPath();
+		projectID = jsonResponse.getInt("id");
+
+		assertEquals(projectTitle, jsonResponse.get("title"));
+		assertEquals(projectDescription, jsonResponse.get("description"));
+		assertEquals(201, response.getStatusCode());
+
+		String categoryTitle = "categoryTitle";
+		String categoryDescription = "categoryDescription";
+		JSONObject categoryObject = new JSONObject();
+		categoryObject.put("title", categoryTitle);
+		categoryObject.put("description", categoryDescription);
+
+		Response categoryResponse = given()
+				.contentType(ContentType.JSON)
+				.body(categoryObject.toJSONString())
+				.when()
+				.post("http://localhost:4567/projects" + projectID + "/categories");
+
+		JsonPath jsonResponseCategory = categoryResponse.jsonPath();
+		categoryID = jsonResponseCategory.getInt("id");
+
+		assertEquals(categoryTitle, jsonResponseCategory.get("title"));
+		assertEquals(categoryDescription, jsonResponseCategory.get("description"));
+		assertEquals(201, categoryResponse.getStatusCode());
+	}
+
+	@Test
+	public static void deleteInteroperabilityProjectCategory() throws Exception {
+		int currentProjectID = projectID;
+		int currentCategoryID = categoryID;
+
+		Response response = given()
+				.delete("http://localhost:4567/projects/" + currentProjectID + "/categories/" + currentCategoryID);
+		
+		assertEquals(200,response.getStatusCode());
+	}
+
+	@Test
+	public static void createInteroperabilityCategoryTodo() throws Exception {
+		String categoryTitle = "categoryTitle";
+        String categoryDescription = "categoryDescription";
+
+        JSONObject categoryObject = new JSONObject();
+        categoryObject.put("title", categoryTitle);
+        categoryObject.put("description", categoryDescription);
+
+		Response response = given()
+				.contentType(ContentType.JSON)
+				.body(categoryObject.toJSONString())
+				.when()
+				.post("http://localhost:4567/categories");
+
+		JsonPath jsonResponse = response.jsonPath();
+		categoryID2 = jsonResponse.getInt("id");
+
+		assertEquals(categoryTitle, jsonResponse.get("title"));
+		assertEquals(categoryDescription, jsonResponse.get("description"));
+		assertEquals(201, response.getStatusCode());
+
+		String todoTitle = "todoTitle";
+		String todoDescription = "todoDescription";
+
+		JSONObject todoObject = new JSONObject();
+		todoObject.put("title", todoTitle);
+		todoObject.put("description", todoDescription);
+
+		Response todoResponse = given()
+				.contentType(ContentType.JSON)
+				.body(todoObject.toJSONString())
+				.when()
+				.post("http://localhost:4567/categories" + categoryID2 + "/todos");
+
+		JsonPath jsonResponseTodo = todoResponse.jsonPath();
+		todoID = jsonResponseTodo.getInt("id");
+
+		assertEquals(categoryTitle, jsonResponseTodo.get("title"));
+		assertEquals(categoryDescription, jsonResponseTodo.get("description"));
+		assertEquals(201, todoResponse.getStatusCode());
+	}
+
+	@Test
+	public static void deleteInteroperabilityCategoryTodo() throws Exception {
+		int currentCategoryID2 = categoryID2;
+		int currentTodoID = todoID;
+
+		Response response = given()
+				.delete("http://localhost:4567/categories/" + currentCategoryID2 + "/todos/" + currentTodoID);
+		
+		assertEquals(200,response.getStatusCode());
+	}
+
+	@Test
+	public static void createInteroperabilityTodoProject() throws Exception {
+		String todoTitle = "todoTitle";
+        String todoDescription = "todoDescription";
+
+        JSONObject todoObject = new JSONObject();
+        todoObject.put("title", todoTitle);
+        todoObject.put("description", todoDescription);
+
+		Response response = given()
+				.contentType(ContentType.JSON)
+				.body(todoObject.toJSONString())
+				.when()
+				.post("http://localhost:4567/todos");
+
+		JsonPath jsonResponse = response.jsonPath();
+		todoID2 = jsonResponse.getInt("id");
+
+		assertEquals(todoTitle, jsonResponse.get("title"));
+		assertEquals(todoDescription, jsonResponse.get("description"));
+		assertEquals(201, response.getStatusCode());
+
+		String projectTitle = "projectTitle";
+		String projectDescription = "projectDescription";
+
+		JSONObject projectObject = new JSONObject();
+		projectObject.put("title", projectTitle);
+		projectObject.put("description", projectDescription);
+
+		Response projectResponse = given()
+				.contentType(ContentType.JSON)
+				.body(projectObject.toJSONString())
+				.when()
+				.post("http://localhost:4567/todos" + todoID2 + "/projects");
+
+		JsonPath jsonResponseProject = projectResponse.jsonPath();
+		projectID2 = jsonResponseProject.getInt("id");
+
+		assertEquals(projectTitle, jsonResponseProject.get("title"));
+		assertEquals(projectDescription, jsonResponseProject.get("description"));
+		assertEquals(201, projectResponse.getStatusCode());
+	}
+
+	@Test
+	public static void deleteInteroperabilityTodoProject() throws Exception {
+		int currentTodoID2 = todoID2;
+		int currentProjectID2 = projectID2;
+
+		Response response = given()
+				.delete("http://localhost:4567/todos/" + currentTodoID2 + "/projects/" + currentProjectID2);
+		
+		assertEquals(200,response.getStatusCode());
 	}
 }
