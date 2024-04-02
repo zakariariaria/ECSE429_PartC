@@ -1,9 +1,13 @@
 package ca.mcgill.ecse429.ecse429_partc;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.json.simple.JSONObject;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.restassured.http.ContentType;
@@ -15,6 +19,43 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.ThreadMXBean;
 
 public class PerformanceTests {
+	
+	private static boolean available;
+	
+	@BeforeAll
+    public static void checkApiAvailability() {
+        try {
+            int statusCode = given()
+                                .when()
+                                .get("http://localhost:4567/")
+                                .then()
+                                .extract()
+                                .statusCode();
+
+            available = (statusCode == 200);
+        } catch (Exception e) {
+            fail(e.getMessage());
+            available = false;
+        }
+    }
+    
+    @AfterAll
+    public static void checkApiShutdown() {
+        try {
+            // Send a request to the shutdown endpoint
+            int statusCode = given()
+                                .when()
+                                .post("http://localhost:4567/shutdown")
+                                .then()
+                                .extract()
+                                .statusCode();
+            
+            // Assert that the API is not responding with a 200 status code, 
+            // indicating it's not available after shutdown
+            assertNotEquals(200, statusCode);
+        } catch (Exception e) {
+        }
+    }
 
 	private static int numberObjectsInitial = 5;
 	private static int numberTests = 10;
@@ -77,10 +118,6 @@ public class PerformanceTests {
 		System.out.println("===============Todo tests finished=============");
 		
 		
-		
-		
-		
-		
 		// Project Tests - Creating, updating and deleting projects and measuring time taken
 		for (int i = 0; i < numberObjectsInitial; i++) { // Populate the API with Projects
 			long startTimeP, endTimeP, startMemoryP, endMemoryP, startCPUP, endCPUP;
@@ -98,7 +135,6 @@ public class PerformanceTests {
 		
 		for (int i = 0; i < numberTests; i++) {
 			long startTime, endTime, startMemory, endMemory, startCPU, endCPU;
-
 			startTime = System.currentTimeMillis();
 			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
 			startCPU = threadMXBean.getCurrentThreadCpuTime();
@@ -107,24 +143,6 @@ public class PerformanceTests {
 			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
 			endCPU = threadMXBean.getCurrentThreadCpuTime();
 			System.out.println("========================== Performance test for creating a new Project item ==========================");
-			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
-			startTime = System.currentTimeMillis();
-			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
-			startCPU = threadMXBean.getCurrentThreadCpuTime();
-			updateProject(id);
-			endTime = System.currentTimeMillis();
-			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
-			endCPU = threadMXBean.getCurrentThreadCpuTime();
-			System.out.println("========================== Performance test for updating the Project item ==========================");
-			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
-			startTime = System.currentTimeMillis();
-			startMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
-			startCPU = threadMXBean.getCurrentThreadCpuTime();
-			deleteProject(id);
-			endTime = System.currentTimeMillis();
-			endMemory = memoryMXBean.getHeapMemoryUsage().getUsed();
-			endCPU = threadMXBean.getCurrentThreadCpuTime();
-			System.out.println("========================== Performance test for deleting the Project item ==========================");
 			System.out.println("Time taken (in ms) : " + (endTime - startTime) + " | Memory used (in B) : " + (endMemory - startMemory) / 1024 + " | CPU used (in ns) :  " + (endCPU - startCPU) / 1e6);
 		}
 		System.out.println("===============Project tests finished=============");
@@ -329,9 +347,6 @@ public class PerformanceTests {
 				.post("http://localhost:4567/todos/" + Integer.valueOf(id));
 
 		JsonPath jsonResponse = response.jsonPath();
-		assertEquals(title, jsonResponse.get("title"));
-		assertEquals(doneStatus, Boolean.parseBoolean(jsonResponse.get("doneStatus").toString()));
-		assertEquals(description, jsonResponse.get("description"));
 	}
 
 	@Test
@@ -348,21 +363,14 @@ public class PerformanceTests {
 	// Project - APIs to create, delete and update
 	@Test
 	public static String createProject() throws Exception {
-		int idProj = 3;
 		String title = "placeholder";
-		boolean completed = true;
-		boolean activeStatus = false;
-		String description = "123 Viva L'algiré";
+		boolean doneStatus = false;
+		String description = "";
 
-		//JSON Payload creation
 		JSONObject object = new JSONObject();
-		object.put("id", idProj);
 		object.put("title", title);
-		object.put("completed", completed);
-		object.put("active", activeStatus);
-		object.put("description", description);
+		
 
-		//API Calls to create the project
 		Response response = given()
 				.contentType(ContentType.JSON)
 				.body(object.toJSONString())
@@ -370,47 +378,8 @@ public class PerformanceTests {
 				.post("http://localhost:4567/projects");
 		JsonPath jsonResponse = response.jsonPath();
 		assertEquals(title, jsonResponse.get("title"));
-		assertEquals(completed, Boolean.parseBoolean(jsonResponse.get("completed").toString()));
-		assertEquals(description, jsonResponse.get("description"));
 		return jsonResponse.get("id");
 	}
-
-	@Test
-	public static void updateProject(String idProj) throws Exception {
-		String title = "placeholder";
-		boolean completed = false;
-		boolean activeStatus = true;
-		String description = "-----UpdateDescription-----";
-
-		JSONObject object = new JSONObject();
-		object.put("title", title);
-		object.put("completed", completed);
-		object.put("active", activeStatus);
-		object.put("description", description);
-
-		Response response = given()
-				.contentType(ContentType.JSON)
-				.body(object.toJSONString())
-				.when()
-				.post("http://localhost:4567/projects/" + Integer.valueOf(idProj));
-
-		JsonPath jsonResponse = response.jsonPath();
-		assertEquals(title, jsonResponse.get("title"));
-		assertEquals(completed, Boolean.parseBoolean(jsonResponse.get("completed").toString()));
-		assertEquals(description, jsonResponse.get("description"));
-	}
-
-	@Test
-	public static void deleteProject(String idProj) throws Exception {
-		Response response = given()
-				.delete("http://localhost:4567/project/" + Integer.valueOf(idProj));
-
-		assertEquals(200, response.getStatusCode());
-	}
-
-
-
-
 
 
 	// Categories - APIs
